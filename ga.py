@@ -38,7 +38,7 @@ def fitness(x):
 # Np number of individuals are chosen, and then at each iteration, the best 2 individuals from the 
 # randomly chosen individuals are selected to be the parents
 def selection(pop_fitness):
-    num_pairs = int(POPULATION_SIZE * PROBABILITY_OF_CROSSOVER / 2)    # Amount of parent pairs that should be selected
+    num_pairs = int(POPULATION_SIZE * PROBABILITY_OF_CROSSOVER / 2)     # Number of parent pairs that should be selected
     parents = np.empty((num_pairs, 2), dtype='int32')
     for idx in range(num_pairs):
         sample = rng.choice(POPULATION_SIZE, TOURNAMENT_SIZE, replace=False)
@@ -69,15 +69,15 @@ def mutation(chromosomes):
 # Create a list of the users for which you want to analyse
 random_users = [382]
 for ind, current_user in enumerate(random_users):
-    user = matrix_base[current_user]                        # Ratings of all movies by the user
-    user_rated = np.where(user != 0)                        # Movies where were actually rated by the user
+    user = matrix_base[current_user]                                    # Ratings of all movies by the user
+    user_rated = np.where(user != 0)                                    # Movies where were actually rated by the user
     
     user_test_pos = np.where(matrix_test[current_user] != 0)
-    user_test = matrix_test[current_user][user_test_pos]    # Retireve the test ratings of the user
+    user_test = matrix_test[current_user][user_test_pos]                # Retireve the test ratings of the user
 
-    user_unrated = np.where(user == 0)                      # The movies which were not rated by user
+    user_unrated = np.where(user == 0)                                  # The movies which were not rated by user
     others = np.delete(matrix_base, current_user, axis=0)
-    others_filled = np.delete(matrix_filled, current_user, axis=0)  # Other users with randomly filled values
+    others_filled = np.delete(matrix_filled, current_user, axis=0)      # Other users with randomly filled values
 
     # Calculate the pair wise similarity with every user
     similarity = np.array([pearsonr(user[user_rated], us[user_rated]) for us in others_filled])
@@ -96,6 +96,7 @@ for ind, current_user in enumerate(random_users):
     optimals = []
     generations = []
 
+    # Perform the algorithm 10 times
     for i in range(10):
         # Create initial population by inserting the user ratings for the rated movies
         initial_population = np.random.randint(low=1, high=6, size=(POPULATION_SIZE, NUM_MOVIES))
@@ -161,7 +162,7 @@ for ind, current_user in enumerate(random_users):
     print('Average RMSE:', rmse_avg[-1])
     print('Average MAE:', mae_avg[-1])
 
-    # Plot the charts for the population
+    # Plot the charts for the metrics of the user across the number of generations
     plt.plot(np.arange(max(generations)), best_avg)
     plt.title('Population size: ' + str(POPULATION_SIZE) + ' Crossover: ' + str(PROBABILITY_OF_CROSSOVER) + '% Mutation: '
               + str(PROBABILITY_OF_MUTATION) + '%')
